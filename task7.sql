@@ -1,7 +1,6 @@
 CREATE PROCEDURE GetTopCoachesAndWinners
 AS
 BEGIN
-    -- Запрос для определения пловцов-победителей (1, 2 и 3 место) по двум параметрам
     WITH RankedResults AS (
         SELECT
             R.ResultId,
@@ -25,7 +24,6 @@ BEGIN
             dbo.Coach C ON S.CoachId = C.CoachId
     )
 
-    -- Вывод результатов для пловцов-победителей
     SELECT
         RR.ResultId,
         RR.CompetitionId,
@@ -51,8 +49,6 @@ BEGIN
         dbo.Competition CO ON RR.CompetitionId = CO.CompetitionId
     WHERE
         RR.Rank <= 3;
-
-    -- Запрос для определения общего рейтинга топ 10 тренеров
     WITH CoachPoints AS (
         SELECT
             S.CoachId,
@@ -75,8 +71,6 @@ BEGIN
         GROUP BY
             S.CoachId, C.FirstName, C.LastName
     )
-
-    -- Вывод результатов для топ 10 тренеров
     SELECT TOP 10
         CP.CoachId,
         CP.CoachFirstName,
@@ -88,8 +82,6 @@ BEGIN
         CoachPoints CP
     ORDER BY
         CP.TotalPoints DESC;
-
-    -- Вывод общих результатов
     SELECT
         TS.*,
         TC.TotalPoints
@@ -97,8 +89,6 @@ BEGIN
         #TopSwimmers TS
     INNER JOIN
         #TopCoaches TC ON TS.CoachId = TC.CoachId;
-
-    -- Очистка временных таблиц
     DROP TABLE #TopSwimmers;
     DROP TABLE #TopCoaches;
 END;
